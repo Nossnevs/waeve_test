@@ -24,7 +24,7 @@ class WeaveTest:
                 node = random.choice(self.nodes)
                 self.__create_test(i, node)
             server_list = self.d.services.list()
-            test_services = [s for s in server_list if s.name.startswith('test-')]
+            test_services = [s for s in server_list if s.name.startswith('test_')]
             while True:
                 sleep(self.quiet_time)
                 print('Moving services around')
@@ -43,9 +43,9 @@ class WeaveTest:
 
     def __create_test(self, i, node_name):
         test_kwargs = {
-            'name': 'test-' + str(i),
+            'name': 'test_' + str(i),
             'image': 'nossnevs/weave_test:latest',
-            'env': {'SERVICE_NAME': 'test-' + str(i)},
+            'env': {'SERVICE_NAME': 'test_' + str(i)},
             'resources': Resources(mem_limit=512 * 1000 * 1000, mem_reservation=100 * 1000 * 1000),
             'labels':{
                 'traefik.port': '80',
@@ -59,7 +59,7 @@ class WeaveTest:
             'mode': {'Replicated': {'Replicas': 2}},
             'constraints': ['node.hostname!=' + node_name]
         }
-        print('Creating service test_' + str(i))
+        print('Creating service test-' + str(i))
         self.d.services.create(**test_kwargs)
 
     def __update_test(self, s, node_name=None, replicas=1):
@@ -71,7 +71,7 @@ class WeaveTest:
             'labels': {
                 'traefik.port': '80',
                 'traefik.backend.loadbalancer.method': 'drr',
-                'traefik.frontend.rule': 'Host:' + s.name + '.ohmytest.se',
+                'traefik.frontend.rule': 'Host:' + s.name.replace('_', '-') + '.ohmytest.se',
                 'traefik.frontend.entryPoints': 'http',
 
             },
@@ -88,7 +88,7 @@ class WeaveTest:
 
 def clean_up():
     d = docker.from_env()
-    test_services = [s for s in d.services.list() if s.name.startswith('test-')]
+    test_services = [s for s in d.services.list() if s.name.startswith('test_')]
     print('Start cleaning upp ' + str(len(test_services)) + ' services')
     for s in test_services:
         print('Removing ' + s.name)
