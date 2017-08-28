@@ -66,6 +66,13 @@ class WeaveTest:
             'name': s.name,
             'resources': Resources(mem_limit=512 * 1000 * 1000, mem_reservation=100 * 1000 * 1000),
             'env': {'SERVICE_NAME': s.name, 'date': datetime.now()},
+            'labels': {
+                'traefik.port': '80',
+                'traefik.backend.loadbalancer.method': 'drr',
+                'traefik.frontend.rule': 'Host:' + s.name + '.ohmytest.se',
+                'traefik.frontend.entryPoints': 'HTTP',
+
+            },
             'networks': [self.network],
             'mode': {'Replicated': {'Replicas': replicas}},
         }
