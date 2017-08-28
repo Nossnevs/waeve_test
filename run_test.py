@@ -75,6 +75,7 @@ class WeaveTest:
 
             },
             'networks': [self.network],
+            'endpoint_spec': EndpointSpec(mode='vip'),
             'mode': {'Replicated': {'Replicas': replicas}},
         }
 
