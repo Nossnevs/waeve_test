@@ -37,7 +37,7 @@ class WeaveTest:
         for s in services:
             s.reload()
             node = random.choice(self.nodes)
-            print('Moved ' + s.name + ' to ' + node)
+            print('Banned ' + s.name + ' from ' + node)
             self.__update_test(s, node)
 
     def __create_test(self, i, node_name):
@@ -55,7 +55,7 @@ class WeaveTest:
             },
             'networks': [self.network],
             'mode': {'Replicated': {'Replicas': 2}},
-            'constraints': ['node.hostname==' + node_name]
+            'constraints': ['node.hostname!=' + node_name]
         }
         print('Creating service test_' + str(i))
         self.d.services.create(**test_kwargs)
@@ -71,7 +71,7 @@ class WeaveTest:
         }
 
         if node_name:
-            test_kwargs['constraints'] = ['node.hostname==' + node_name]
+            test_kwargs['constraints'] = ['node.hostname!=' + node_name]
 
         s.update(**test_kwargs)
 
