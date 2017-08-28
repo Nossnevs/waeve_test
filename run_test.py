@@ -52,7 +52,6 @@ class WeaveTest:
                 'traefik.backend.loadbalancer.method': 'drr',
                 'traefik.frontend.rule': 'Host:' + 'test-' + str(i) + '.ohmytest.se',
                 'traefik.frontend.entryPoints': 'http',
-                'traefik.docker.network': 'weave',
             },
             'networks': [self.network],
             'endpoint_spec': EndpointSpec(mode='vip'),
@@ -73,8 +72,6 @@ class WeaveTest:
                 'traefik.backend.loadbalancer.method': 'drr',
                 'traefik.frontend.rule': 'Host:' + s.name.replace('_', '-') + '.ohmytest.se',
                 'traefik.frontend.entryPoints': 'http',
-                'traefik.docker.network': 'weave',
-
             },
             'networks': [self.network],
             'endpoint_spec': EndpointSpec(mode='vip'),
