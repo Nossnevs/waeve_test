@@ -24,7 +24,7 @@ class WeaveTest:
                 node = random.choice(self.nodes)
                 self.__create_test(i, node)
             server_list = self.d.services.list()
-            test_services = [s for s in server_list if s.name.startswith('test_')]
+            test_services = [s for s in server_list if s.name.startswith('test-')]
             while True:
                 sleep(self.quiet_time)
                 print('Moving services around')
@@ -40,17 +40,18 @@ class WeaveTest:
             print('Banned ' + s.name + ' from ' + node)
             self.__update_test(s, node)
 
+
     def __create_test(self, i, node_name):
         test_kwargs = {
-            'name': 'test_' + str(i),
+            'name': 'test-' + str(i),
             'image': 'nossnevs/weave_test:latest',
-            'env': {'SERVICE_NAME': 'test_' + str(i)},
+            'env': {'SERVICE_NAME': 'test-' + str(i)},
             'resources': Resources(mem_limit=512 * 1000 * 1000, mem_reservation=100 * 1000 * 1000),
             'labels':{
                 'traefik.port': '80',
                 'traefik.backend.loadbalancer.method': 'drr',
-                'traefik.frontend.rule': 'Host:' + 'test_' + str(i) + '.ohmytest.se',
-                'traefik.frontend.entryPoints': 'HTTP',
+                'traefik.frontend.rule': 'Host:' + 'test-' + str(i) + '.ohmytest.se',
+                'traefik.frontend.entryPoints': 'http',
 
             },
             'networks': [self.network],
@@ -71,12 +72,12 @@ class WeaveTest:
                 'traefik.port': '80',
                 'traefik.backend.loadbalancer.method': 'drr',
                 'traefik.frontend.rule': 'Host:' + s.name + '.ohmytest.se',
-                'traefik.frontend.entryPoints': 'HTTP',
+                'traefik.frontend.entryPoints': 'http',
 
             },
             'networks': [self.network],
             'endpoint_spec': EndpointSpec(mode='vip'),
-            'mode': {'Replicated': {'Replicas': replicas}},
+            'mode': {'Replicated': {'Replicas': 2}},
         }
 
         if node_name:
@@ -87,7 +88,7 @@ class WeaveTest:
 
 def clean_up():
     d = docker.from_env()
-    test_services = [s for s in d.services.list() if s.name.startswith('test_')]
+    test_services = [s for s in d.services.list() if s.name.startswith('test-')]
     print('Start cleaning upp ' + str(len(test_services)) + ' services')
     for s in test_services:
         print('Removing ' + s.name)
