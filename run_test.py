@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 from time import sleep
 
-from docker.types.services import Resources
+from docker.types.services import Resources, EndpointSpec
 
 
 class WeaveTest:
@@ -54,6 +54,7 @@ class WeaveTest:
 
             },
             'networks': [self.network],
+            'endpoint_spec': EndpointSpec(mode='vip'),
             'mode': {'Replicated': {'Replicas': 2}},
             'constraints': ['node.hostname!=' + node_name]
         }
