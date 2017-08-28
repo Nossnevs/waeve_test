@@ -59,7 +59,7 @@ class WeaveTest:
             'mode': {'Replicated': {'Replicas': 2}},
             'constraints': ['node.hostname!=' + node_name]
         }
-        print('Creating service test-' + str(i))
+        print('Creating service test_' + str(i))
         self.d.services.create(**test_kwargs)
 
     def __update_test(self, s, node_name=None, replicas=1):
@@ -73,6 +73,7 @@ class WeaveTest:
                 'traefik.backend.loadbalancer.method': 'drr',
                 'traefik.frontend.rule': 'Host:' + s.name.replace('_', '-') + '.ohmytest.se',
                 'traefik.frontend.entryPoints': 'http',
+                'traefik.docker.network': 'weave',
 
             },
             'networks': [self.network],
